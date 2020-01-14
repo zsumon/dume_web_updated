@@ -3,11 +3,13 @@ window.onload = () => {
     if (document.readyState === "complete") {
         document.getElementById('phone-number').value = localStorage.getItem('cph');
     }
-    firebase.auth().onAuthStateChanged(function (user) {
-        // console.log('user is:', user);
+    firebase.auth().onAuthStateChanged(async function (user) {
         __loggedInUser = user;
-        if (user) {
-            console.log(user);
+        if (user && (await isNewUser(user.uid))) {
+            // console.log('inside auth:' + user.uid + " " + user.phoneNumber);
+            await showRegModalAndRegister(user.uid, user.phoneNumber);
+        } else if (user) {
+            // console.log(user);
             document.querySelector('#start-over-btn').classList.remove('d-none');
             document.querySelector('#id_lgout').classList.remove('d-none');
             document.getElementById('login-div').classList.remove('d-flex');
@@ -36,31 +38,39 @@ let tempConfirmationResult = null;
 let __commonQueryString = "Re";
 let __selectedSubjects = [];
 
-function sendCode() {
+async function sendCode() {
     const phoneNumber = '+880' + document.getElementById('phone-number').value;
     const appVerifier = window.recaptchaVerifier;
     firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-        .then(function (confirmationResult) {
-            console.log('sms sent');
+        .then(async function (confirmationResult) {
+            // console.log('sms sent');
             // SMS sent. Prompt user to type the code from the message, then sign the
             // user in with confirmationResult.confirm(code).
             window.confirmationResult = confirmationResult;
-            console.log(confirmationResult);
+            // console.log(confirmationResult);
             tempConfirmationResult = confirmationResult;
             document.getElementById('enter-code').classList.remove('d-none');
             document.getElementById('recaptcha-container').classList.add('d-none');
+
+            //    maybe check for new user ?? and let him register first.. ??
+
         }).catch(function (error) {
         // Error; SMS not sent
         console.log(error);
     });
 }
 
-function confirmCode() {
+async function confirmCode() {
     let confirmationResult = tempConfirmationResult;
     let code = document.getElementById('v-code').value;
-    confirmationResult.confirm(code).then(function (result) {
+    confirmationResult.confirm(code).then(async function (result) {
         // User signed in successfully.
         const user = result.user;
+
+        if (user != null && isNewUser(user.uid)) {
+            await showRegModalAndRegister(user.uid, user.phoneNumber);
+        }
+
         document.querySelector('#id_lgout').classList.remove('d-none');
         // ...
         // console.log('success!', user);
@@ -72,6 +82,8 @@ function confirmCode() {
         document.getElementById('select-loc').classList.remove('d-none');
         //document.getElementById('select-loc').classList.add('d-flex');
         //document.getElementById('select-loc').classList.add('justify-content-center');
+
+
     }).catch(function (error) {
         // User couldn't sign in (bad verification code?)
         // ...
@@ -83,6 +95,133 @@ function confirmCode() {
         console.log(error);
     });
 }
+
+// helper function for new user registration...
+
+async function isNewUser(uid) {
+    const miniUser = await db.collection("mini_users").doc(uid).get();
+    return miniUser.data() == null;
+}
+
+async function showRegModalAndRegister(uid, phone) {
+    // console.log('uid inside modal is:' + uid);
+    const regHtml = `<div class="modal fade" id="regModalCenter" data-backdrop="static" data-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Just A Minute.. Please Register First</h5>
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+            </div>
+            <div class="modal-body">
+<!--            This is for reg. fields..-->
+                <div class="d-flex align-items-center m-2">
+                    <p class="align-items-center align-middle">Your Phone number is: ${phone}</p> <button type="button" id="changeRegPhoneNumBtn" class="btn btn-outline-primary ml-1">Change</button>
+                </div>
+                
+                <form> 
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input id="RfName" class="form-control" placeholder="First name" type="text">
+                        <input id="RlName" class="form-control" placeholder="Last name" type="text">
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                        </div>
+                        <input id="Remail" class="form-control" placeholder="Email address" type="email">
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <!-- <span class="input-group-text"> <i class="fa fa-phone"></i> </span> -->
+                        </div>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">+880</span>
+                        </div>
+                        <!-- <select class="custom-select" style="max-width: 120px;">
+                        <option selected="">+971</option>
+                        <option value="1">+972</option>
+                        <option value="2">+198</option>
+                        <option value="3">+701</option>
+                    </select> -->
+
+                        <input id="Rphone" class="form-control" placeholder="Phone number" type="text">
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-building"></i> </span>
+                        </div>
+                        <select id="acc-type" class="form-control">
+                            <option>Student</option>
+                        </select>
+                    </div>
+                    <!-- form-group end.// -->
+                    <div id="recaptcha-container" class="mb-2 d-flex justify-content-center"></div>
+                    <div class="form-group">
+                        <button type="button" id="createAccountButtonId" class="btn btn-primary btn-block"> Create Account</button>
+                    </div>
+                    <!-- form-group// -->
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>`;
+
+    const div = document.createElement('div');
+    div.innerHTML = regHtml;
+    document.getElementsByTagName('body')[0].appendChild(div);
+
+    document.getElementById('changeRegPhoneNumBtn').onclick = async function () {
+        signOut();
+    };
+
+    if (phone) {
+        document.querySelector('#Rphone').value = phone.substr(4);
+        document.querySelector('#Rphone').setAttribute('disabled', 'true');
+    }
+
+    document.getElementById('createAccountButtonId').onclick = async function () {
+        //    grab all values..
+        const firstName = document.querySelector('#RfName').value;
+        const lastName = document.querySelector('#RlName').value;
+        const email = document.querySelector('#Remail').value;
+        const phone_value = document.querySelector('#Rphone').value;
+
+
+        const __dat = {
+                account_major: 'student',
+                email: email,
+                first_name: firstName,
+                lastName: lastName,
+                foreign_obligation: false,
+                imei: ['', ''],
+                last_name: lastName,
+                obligated_user: null,
+                obligation: false,
+                phone_number: '0' + phone_value,
+            }
+        ;
+        db.collection('mini_users').doc(uid).set(__dat).then(() => {
+            console.log('Reg. Success');
+            $('#regModalCenter').modal('hide');
+            window.location.reload();
+
+        });
+        // console.log(miniRef);
+
+        // console.log(firstName + " " + lastName + " " + phone_value + " " + email + " " + uid);
+    };
+    $('#regModalCenter').modal('show');
+}
+
 
 function tryAgain() {
     let phn = document.getElementById('phone-number').value;
