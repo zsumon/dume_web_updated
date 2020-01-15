@@ -260,28 +260,17 @@ async function showRegModalAndRegister(uid, phone) {
             'user_ref_link': '',//string
         };
         try {
+            const rid = showLoadingAnimation('Please Wait We\'re setting up your account!');
             const _addToMini = await db.collection('mini_users').doc(uid).set(__dat);
             const _addToProf = await db.collection('users/students/stu_pro_info').doc(uid).set(prof);
             console.log('Success');
+            hideLoadingAnimation(rid);
             $('#regModalCenter').modal('hide');
             window.location.reload();
         } catch (e) {
             signOut();
             console.log('Contact service center. Critical Error: ', e);
         }
-
-
-        /*
-                db.collection('mini_users').doc(uid).set(__dat).then(() => {
-                    console.log('Reg. Success');
-                    // TODO... Save profile data in stu_pro_info
-                    $('#regModalCenter').modal('hide');
-                    window.location.reload();
-
-                });
-        */
-
-
         // console.log(miniRef);
         // console.log(firstName + " " + lastName + " " + phone_value + " " + email + " " + uid);
     };
