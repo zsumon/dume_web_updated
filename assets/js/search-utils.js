@@ -76,3 +76,22 @@ function recentTuitionCollapse(btn) {
         btn.innerText = "Show Recent Tuition";
     }
 }
+
+
+/*
+const ff = () => {
+    db.collection('users/students/stu_pro_info').where('phone_number', '==', '01536100076').get().then((qs) => {
+        qs.forEach((docSnap) => {
+            const data = docSnap.data();
+            // console.log(data);
+            let str = '';
+            for (const i of Object.keys(data)) {
+                str += '\'' + i + '\'' + ':,\/\/' + typeof data[i] + '\n';
+            }
+            console.log(str);
+            return;
+        });
+    });
+};
+ff();
+*/

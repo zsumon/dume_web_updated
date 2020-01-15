@@ -209,14 +209,80 @@ async function showRegModalAndRegister(uid, phone) {
                 phone_number: '0' + phone_value,
             }
         ;
-        db.collection('mini_users').doc(uid).set(__dat).then(() => {
-            console.log('Reg. Success');
+
+        // const _addToStu = await db.collection('users/students/stu_pro_info').doc(uid).set();
+        const prof = {
+            'applied_promo': [],//object
+            'available_promo': [],//object
+            'avatar': '',//string
+            'current_address': new firebase.firestore.GeoPoint(0, 0),//object
+            'current_status': '',//string
+            'email': email,//string
+            'favourite_places': {},//object
+            'first_name': firstName,//string
+            'gender': '',//string
+            'last_name': lastName,//string
+            'next_rp_write': '',//string
+            'next_rs_write': '',//string
+            'payments': {
+                'obligation_amount': '0',
+                'obligation_currency': 'BDT',
+                'penalty_paid': '0',
+                'total_paid': '0'
+            },//object
+            'penalty': 0,//number
+            'phone_number': '0' + phone_value,//string
+            'previous_result': '',//string
+            'pro_com_%': '',//string
+            'rating_array': [],//object
+            'recent_places': {},//object
+            'recent_search': {},//object
+            'referer_id': '',//string
+            'referred': false,//boolean
+            'saved_places': {}, //object
+            'self_rating': {
+                'dl_behaviour': "0",
+                'dl_communication': "0",
+                'l_behaviour': "1",
+                'l_communication': "1",
+                'star_count': "1",
+                'star_rating': "5.00"
+            },//object
+            'unread_msg': '',//string
+            'unread_noti': '',//string
+            'unread_records': {
+                'accepted_count': "0",
+                'completed_count': "0",
+                'current_count': "0",
+                'pending_count': "0",
+                'rejected_count': "0"
+            },//object
+            'user_ref_link': '',//string
+        };
+        try {
+            const _addToMini = await db.collection('mini_users').doc(uid).set(__dat);
+            const _addToProf = await db.collection('users/students/stu_pro_info').doc(uid).set(prof);
+            console.log('Success');
             $('#regModalCenter').modal('hide');
             window.location.reload();
+        } catch (e) {
+            signOut();
+            console.log('Contact service center. Critical Error: ', e);
+        }
 
-        });
+
+        /*
+                db.collection('mini_users').doc(uid).set(__dat).then(() => {
+                    console.log('Reg. Success');
+                    // TODO... Save profile data in stu_pro_info
+                    $('#regModalCenter').modal('hide');
+                    window.location.reload();
+
+                });
+        */
+
+
         // console.log(miniRef);
-
         // console.log(firstName + " " + lastName + " " + phone_value + " " + email + " " + uid);
     };
     $('#regModalCenter').modal('show');
