@@ -67,9 +67,9 @@ async function confirmCode() {
         // User signed in successfully.
         const user = result.user;
 
-        if (user != null && isNewUser(user.uid)) {
+        /*if (user != null && isNewUser(user.uid)) {
             await showRegModalAndRegister(user.uid, user.phoneNumber);
-        }
+        }*/
 
         document.querySelector('#id_lgout').classList.remove('d-none');
         // ...
