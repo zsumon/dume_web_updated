@@ -17,5 +17,6 @@ html, body {
 }
 
 .container-page {
+    margin-top: 2rem;
     min-height: 70vh;
 }
