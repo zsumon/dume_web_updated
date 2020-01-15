@@ -18,11 +18,16 @@ async function deleteAllRejectedRecords(userUid) {
     const rrr = showLoadingAnimation("Deleting All REJECTED Records.");
 
     try {
-        const querySnap = await db.collection('records').where('user_uid', '==', userUid).get();
+        const querySnap = await db.collection('records').where('user_uid', '==', userUid).where('record_status', '==', 'Rejected').get();
         querySnap.forEach(async (docSnap) => {
             const ds = await docSnap.ref.delete();
+            // console.log();
+            
+            // TODO 
+            // const ds = await docSnap.data();
             // console.log(ds);
         });
+        hideLoadingAnimation(rrr);
     } catch (error) {
         console.log(error);
 

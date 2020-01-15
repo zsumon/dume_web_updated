@@ -4,7 +4,7 @@ window.onload = () => {
     if (document.readyState === "complete") {
         document.getElementById('phone-number').value = localStorage.getItem('cph');
     } else if (document.readyState === "loading") {
-        
+
     }
     firebase.auth().onAuthStateChanged(async function (user) {
         __loggedInUser = user;
@@ -332,6 +332,9 @@ function setCardOptions(title, options, isMultipleAns) {
         // console.log('last step');
         //Handle 'Next' Button manually.. and take to gender div..
         // we'll hide option card.. and show the gender div..
+
+
+
         document.getElementById('card-opt-next').onclick = null;
         document.getElementById('card-opt-next').addEventListener('click', () => {
             let lastOptionSubjects = getCurrentSelectedOptions();
@@ -811,6 +814,7 @@ async function onTeacherItemClicked(searchData, mentorProfile) {
     const studentProfile = (await stRef.get()).data();
 
     await createRecord(searchData, mentorProfile, studentProfile, studentUid, mentorUid);
+
 }
 
 function drawCircleInMap(radiusInKm) {
@@ -905,12 +909,24 @@ async function createRecord(searchData, mentorProfileData, studentProfile, stude
 
     //show a loading animation here..
 
+    // TODO --> await
+    // db.collection("records").add(record).then(docRef => {
+    //     // console.log("Document written with ID: ", docRef.id);
 
-    db.collection("records").add(record).then(docRef => {
-        // console.log("Document written with ID: ", docRef.id);
-        hideLoadingAnimation(lid);
-    }).catch(error => console.error("Error adding document: ", error));
+    // }).catch(error => console.error("Error adding document: ", error));
     //    firebase.firestore.FieldValue.serverTimestamp()
+
+    try {
+        const _mkRec = await db.collection("records").add(record);
+        hideLoadingAnimation(lid);
+        window.location.reload();
+    } catch (error) {
+        console.log(error);
+
+    } finally {
+        hideLoadingAnimation(lid);
+        window.location.reload();
+    }
 }
 
 
