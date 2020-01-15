@@ -21,7 +21,7 @@ async function loadRecentTuition(studentUid) {
             wrapperDiv.classList.add('list-group-item');
 
             let ratingStr = '';
-            const ratImg = `<img src="../../assets/img/star.svg" alt="rating" style="width: 1.5rem;height: 1rem;">`;
+            const ratImg = `<img src="../img/star.svg" alt="rating" style="width: 1.5rem;height: 1rem;">`;
 
             for (let i = 0; i < parseInt(data.sp_info.self_rating.star_rating); i++)
                 ratingStr += ratImg;
@@ -54,7 +54,7 @@ async function loadRecentTuition(studentUid) {
             }
 
             wrapperDiv.innerHTML = `<div class="text-center">
-                        <img style="height: 3rem;width: 3rem;" src="../../assets/img/user.svg" class="rounded-circle"
+                        <img style="height: 3rem;width: 3rem;" src="../img/user.svg" class="rounded-circle"
                              alt="Cinque Terre" width="250" height="250">
                         <p>${data.sp_info.first_name + " " + data.sp_info.last_name}<br>${ratingStr}</p>
                         <p>Location: ${data.sp_info.location}</p>
