@@ -1,7 +1,10 @@
 let __loggedInUser = null;
 window.onload = () => {
+
     if (document.readyState === "complete") {
         document.getElementById('phone-number').value = localStorage.getItem('cph');
+    } else if (document.readyState === "loading") {
+        
     }
     firebase.auth().onAuthStateChanged(async function (user) {
         __loggedInUser = user;
@@ -55,9 +58,9 @@ async function sendCode() {
             //    maybe check for new user ?? and let him register first.. ??
 
         }).catch(function (error) {
-        // Error; SMS not sent
-        console.log(error);
-    });
+            // Error; SMS not sent
+            console.log(error);
+        });
 }
 
 async function confirmCode() {
@@ -197,18 +200,18 @@ async function showRegModalAndRegister(uid, phone) {
 
 
         const __dat = {
-                account_major: 'student',
-                email: email,
-                first_name: firstName,
-                lastName: lastName,
-                foreign_obligation: false,
-                imei: ['', ''],
-                last_name: lastName,
-                obligated_user: null,
-                obligation: false,
-                phone_number: '0' + phone_value,
-            }
-        ;
+            account_major: 'student',
+            email: email,
+            first_name: firstName,
+            lastName: lastName,
+            foreign_obligation: false,
+            imei: ['', ''],
+            last_name: lastName,
+            obligated_user: null,
+            obligation: false,
+            phone_number: '0' + phone_value,
+        }
+            ;
 
         // const _addToStu = await db.collection('users/students/stu_pro_info').doc(uid).set();
         const prof = {
@@ -315,7 +318,7 @@ function setCardOptions(title, options, isMultipleAns) {
                 d.classList.add('d-none');
             }
             nodeHtml =
-                `<div class="custom-control custom-radio">	
+                `<div class="custom-control custom-radio mb-3">	
                 <input type="radio" id="opt_id${i}" name="customRadio" class="custom-control-input">	
                 <label class="custom-control-label" for="opt_id${i}">${options[i]}</label>	
                 </div>`
@@ -384,7 +387,7 @@ function lastStep() {
 
 
     const __DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-//    set tuition days.. views
+    //    set tuition days.. views
     const tutionDaysDiv = document.querySelector("#tuition-days-div");
     for (let li = 0; li < __DAYS.length; li++) {
         let currentNode =
@@ -686,7 +689,7 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
             }
         });
     }
-// Listing teachers
+    // Listing teachers
     // show an available teachers list to student from `listedTeachers`
     // console.log("End of setting data:", listedTeachers);
     /// display a list of available list of teachers...
@@ -829,7 +832,7 @@ function drawCircleInMap(radiusInKm) {
     let centerMarker = new google.maps.Marker({
         position: center,
         map: window.myMap,
-        icon: {url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png'}
+        icon: { url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png' }
     });
 }
 
@@ -907,7 +910,7 @@ async function createRecord(searchData, mentorProfileData, studentProfile, stude
         // console.log("Document written with ID: ", docRef.id);
         hideLoadingAnimation(lid);
     }).catch(error => console.error("Error adding document: ", error));
-//    firebase.firestore.FieldValue.serverTimestamp()
+    //    firebase.firestore.FieldValue.serverTimestamp()
 }
 
 
