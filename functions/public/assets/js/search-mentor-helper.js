@@ -274,6 +274,7 @@ async function showRegModalAndRegister(uid, phone) {
         // console.log(miniRef);
         // console.log(firstName + " " + lastName + " " + phone_value + " " + email + " " + uid);
     };
+
     $('#regModalCenter').modal('show');
 }
 
@@ -708,12 +709,12 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
         };
 
         let ratingStr = '';
-        const ratImg = `<img src="../../assets/img/star.svg" alt="rating" style="width: 1.5rem;height: 1rem;">`;
+        const ratImg = `<img src="./assets/img/star.svg" alt="rating" style="width: 1.5rem;height: 1rem;">`;
         for (let i = 0; i < parseInt(mentorProfile.self_rating.star_rating); i++) ratingStr += ratImg;
 
         node.innerHTML = `<div class="listed-teacher-wrapper">
                         <div class="d-flex justify-content-center">
-                            <img src="../../assets/img/user.svg" style="height: 5rem;width: 5rem;" alt="Mentor Image">
+                            <img src="./assets/img/user.svg" style="height: 5rem;width: 5rem;" alt="Mentor Image">
                         </div>
                         <div class="d-flex justify-content-center">
                             <h5 class="">${mentorProfile.first_name + " " + mentorProfile.last_name}</h5>
