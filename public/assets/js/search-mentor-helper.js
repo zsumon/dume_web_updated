@@ -58,9 +58,9 @@ async function sendCode() {
             //    maybe check for new user ?? and let him register first.. ??
 
         }).catch(function (error) {
-            // Error; SMS not sent
-            console.log(error);
-        });
+        // Error; SMS not sent
+        console.log(error);
+    });
 }
 
 async function confirmCode() {
@@ -200,18 +200,18 @@ async function showRegModalAndRegister(uid, phone) {
 
 
         const __dat = {
-            account_major: 'student',
-            email: email,
-            first_name: firstName,
-            lastName: lastName,
-            foreign_obligation: false,
-            imei: ['', ''],
-            last_name: lastName,
-            obligated_user: null,
-            obligation: false,
-            phone_number: '0' + phone_value,
-        }
-            ;
+                account_major: 'student',
+                email: email,
+                first_name: firstName,
+                lastName: lastName,
+                foreign_obligation: false,
+                imei: ['', ''],
+                last_name: lastName,
+                obligated_user: null,
+                obligation: false,
+                phone_number: '0' + phone_value,
+            }
+        ;
 
         // const _addToStu = await db.collection('users/students/stu_pro_info').doc(uid).set();
         const prof = {
@@ -334,7 +334,6 @@ function setCardOptions(title, options, isMultipleAns) {
         // we'll hide option card.. and show the gender div..
 
 
-
         document.getElementById('card-opt-next').onclick = null;
         document.getElementById('card-opt-next').addEventListener('click', () => {
             let lastOptionSubjects = getCurrentSelectedOptions();
@@ -410,8 +409,7 @@ function lastStep() {
         tutionDaysDiv.appendChild(cDiv);
     }
 
-
-    // console.log(__commonQueryString, __selectedSubjects, window.selectedLocation);
+    console.log(__commonQueryString, __selectedSubjects);
 }
 
 
@@ -679,19 +677,44 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
             };
             let _dis = distance([data.l.latitude, data.l.longitude], [center.lat, center.lon]);
             if (_dis <= MAX_DISTANCE) {
-                let marker = new google.maps.Marker({
-                    position: dat_loc,
-                    map: window.myMap,
-                    // title: data.sp_info.first_name + " " + data.sp_info.last_name,
-                    icon: {
-                        url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                let skipTeacher = false;
+
+                // match subjects and other stuffs...
+                let queryList = data[__commonQueryString].query_list;
+                queryList = queryList[queryList.length - 3];
+                // console.log('QL:', queryList);
+                // strictly filtering mentors...
+                // they must teach all of the students' selected subjects..
+                const mentorTakenSubjects = queryList.split(','); /*data[__commonQueryString].jizz.Subject.split(',');*/
+                //    TODO -> need a recheck  for gender, salary..
+
+                if (searchData.gender !== "Any" && searchData.gender !== data.gender) {
+                    skipTeacher = true;
+                }
+
+                for (const i of __selectedSubjects) {
+                    if (!mentorTakenSubjects.includes(i)) {
+                        // skip this teacher...
+                        skipTeacher = true;
+                        break;
                     }
-                });
-                data.mentor_uid = doc.id;
-                listedTeachers.push(data);
+                }
+                if (!skipTeacher) {
+                    let marker = new google.maps.Marker({
+                        position: dat_loc,
+                        map: window.myMap,
+                        // title: data.sp_info.first_name + " " + data.sp_info.last_name,
+                        icon: {
+                            url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                        }
+                    });
+                    data.mentor_uid = doc.id;
+                    listedTeachers.push(data);
+                }
             }
         });
     }
+
     // Listing teachers
     // show an available teachers list to student from `listedTeachers`
     // console.log("End of setting data:", listedTeachers);
@@ -767,6 +790,10 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
     hideLoadingAnimation(loadingId);
 }
 
+function filterMentorBySubjects(selectedSubjects, mentorProfile) {
+
+}
+
 async function getAddressByLatLon(latitude, longitude) {
     const url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&key=AIzaSyDFnedGL4qr_jenIpWYpbvot8s7Vuay_88";
     const req = await fetch(url);
@@ -836,7 +863,7 @@ function drawCircleInMap(radiusInKm) {
     let centerMarker = new google.maps.Marker({
         position: center,
         map: window.myMap,
-        icon: { url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png' }
+        icon: {url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png'}
     });
 }
 
@@ -930,6 +957,7 @@ async function createRecord(searchData, mentorProfileData, studentProfile, stude
         // window.location.reload();
     }
 }
+
 function showClosableModal(title, body, reload) {
     let str = Math.random().toString(36).substring(7);
     const _html = `<!-- Modal -->
