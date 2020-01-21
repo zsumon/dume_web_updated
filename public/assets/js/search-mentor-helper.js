@@ -918,24 +918,52 @@ async function createRecord(searchData, mentorProfileData, studentProfile, stude
 
     try {
         const _mkRec = await db.collection("records").add(record);
-        hideLoadingAnimation(lid);
-        window.location.reload();
+        showClosableModal('Requested Menotor!',
+            'Request is sent, please wait for response from mentor.', true);
+        // window.location.reload();
     } catch (error) {
+        showClosableModal('Request failed!',
+            'Request can\'t be sent, please try again.', true);
         console.log(error);
-
     } finally {
         hideLoadingAnimation(lid);
-        window.location.reload();
+        // window.location.reload();
     }
 }
+function showClosableModal(title, body, reload) {
+    let str = Math.random().toString(36).substring(7);
+    const _html = `<!-- Modal -->
+        <div class="modal fade" id="${str}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"  data-keyboard="false" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-body text-center">
+                <p>${title}</p>
+                <p>${body}</p>
+                <button type="button" id="rbt${str}" class="btn btn-secondary text-center" data-dismiss="modal">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>`;
 
+    const span = document.createElement('span');
+    span.innerHTML = _html;
+    document.getElementsByTagName('body')[0].appendChild(span);
+
+    $('#' + str).modal('show');
+
+    if (reload) {
+        document.getElementById('rbt' + str).onclick = () => {
+            window.location.reload();
+        }
+    }
+}
 
 function showLoadingAnimation(title) {
 
     let str = Math.random().toString(36).substring(7);
 
     const _html = `<!-- Modal -->
-        <div class="modal fade" id="${str}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="${str}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"  data-keyboard="false" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-body text-center">
