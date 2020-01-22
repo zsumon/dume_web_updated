@@ -58,9 +58,9 @@ async function sendCode() {
             //    maybe check for new user ?? and let him register first.. ??
 
         }).catch(function (error) {
-        // Error; SMS not sent
-        console.log(error);
-    });
+            // Error; SMS not sent
+            console.log(error);
+        });
 }
 
 async function confirmCode() {
@@ -200,18 +200,18 @@ async function showRegModalAndRegister(uid, phone) {
 
 
         const __dat = {
-                account_major: 'student',
-                email: email,
-                first_name: firstName,
-                lastName: lastName,
-                foreign_obligation: false,
-                imei: ['', ''],
-                last_name: lastName,
-                obligated_user: null,
-                obligation: false,
-                phone_number: '0' + phone_value,
-            }
-        ;
+            account_major: 'student',
+            email: email,
+            first_name: firstName,
+            lastName: lastName,
+            foreign_obligation: false,
+            imei: ['', ''],
+            last_name: lastName,
+            obligated_user: null,
+            obligation: false,
+            phone_number: '0' + phone_value,
+        }
+            ;
 
         // const _addToStu = await db.collection('users/students/stu_pro_info').doc(uid).set();
         const prof = {
@@ -676,29 +676,29 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
                 lng: data.l.longitude
             };
             let _dis = distance([data.l.latitude, data.l.longitude], [center.lat, center.lon]);
+            let skipTeacher = false;
             if (_dis <= MAX_DISTANCE) {
-                let skipTeacher = false;
-
                 // match subjects and other stuffs...
                 let queryList = data[__commonQueryString].query_list;
                 queryList = queryList[queryList.length - 3];
-                // console.log('QL:', queryList);
                 // strictly filtering mentors...
                 // they must teach all of the students' selected subjects..
                 const mentorTakenSubjects = queryList.split(','); /*data[__commonQueryString].jizz.Subject.split(',');*/
-                //    TODO -> need a recheck  for gender, salary..
-
-                if (searchData.gender !== "Any" && searchData.gender !== data.gender) {
+                for (let i = 0; i < mentorTakenSubjects.length; i++) {
+                    mentorTakenSubjects[i] = mentorTakenSubjects[i].trim();
+                }
+                if ((searchData.gender != data.gender) && (searchData.gender != "Any")) {
                     skipTeacher = true;
                 }
-
                 for (const i of __selectedSubjects) {
                     if (!mentorTakenSubjects.includes(i)) {
-                        // skip this teacher...
                         skipTeacher = true;
                         break;
                     }
                 }
+
+                console.log('skip: ', skipTeacher, 'For: ', data);
+                
                 if (!skipTeacher) {
                     let marker = new google.maps.Marker({
                         position: dat_loc,
@@ -790,10 +790,6 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
     hideLoadingAnimation(loadingId);
 }
 
-function filterMentorBySubjects(selectedSubjects, mentorProfile) {
-
-}
-
 async function getAddressByLatLon(latitude, longitude) {
     const url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&key=AIzaSyDFnedGL4qr_jenIpWYpbvot8s7Vuay_88";
     const req = await fetch(url);
@@ -863,7 +859,7 @@ function drawCircleInMap(radiusInKm) {
     let centerMarker = new google.maps.Marker({
         position: center,
         map: window.myMap,
-        icon: {url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png'}
+        icon: { url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/info-i_maps.png' }
     });
 }
 
