@@ -675,6 +675,10 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
                 lat: data.l.latitude,
                 lng: data.l.longitude
             };
+
+
+             if (__loggedInUser.uid == doc.id) return;
+
             let _dis = distance([data.l.latitude, data.l.longitude], [center.lat, center.lon]);
             let skipTeacher = false;
             if (_dis <= MAX_DISTANCE) {
@@ -688,17 +692,18 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
                     mentorTakenSubjects[i] = mentorTakenSubjects[i].trim();
                 }
                 if ((searchData.gender != data.gender) && (searchData.gender != "Any")) {
+                    return;
                     skipTeacher = true;
                 }
                 for (const i of __selectedSubjects) {
                     if (!mentorTakenSubjects.includes(i)) {
                         skipTeacher = true;
-                        break;
+                        return;
+                        // break;
                     }
                 }
+                // console.log('skip: ', skipTeacher, 'For: ', data);
 
-                console.log('skip: ', skipTeacher, 'For: ', data);
-                
                 if (!skipTeacher) {
                     let marker = new google.maps.Marker({
                         position: dat_loc,
