@@ -631,8 +631,8 @@ async function preferencesNextButtonClick() {
     const searchData = {
         "selectedInt": [],
         "gender": document.querySelector('#search-gender').value,
-        "salary_min": document.querySelector("#tu-salary-st").value,
-        "salary_man": document.querySelector("#tu-salary-ed").value,
+        "salary_min": parseInt(document.querySelector("#tu-salary-st").value),
+        "salary_max": parseInt(document.querySelector("#tu-salary-ed").value),
         "start_time": {
             "hour_of_day": _h,
             "minute": _m,
@@ -676,12 +676,14 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
                 lng: data.l.longitude
             };
 
-
-             if (__loggedInUser.uid == doc.id) return;
+            if (__loggedInUser.uid == doc.id) return;
+            const sal = data[__commonQueryString].salary;
+            if (sal > searchData.salary_max || sal < searchData.salary_min) return;
 
             let _dis = distance([data.l.latitude, data.l.longitude], [center.lat, center.lon]);
             let skipTeacher = false;
             if (_dis <= MAX_DISTANCE) {
+
                 // match subjects and other stuffs...
                 let queryList = data[__commonQueryString].query_list;
                 queryList = queryList[queryList.length - 3];
