@@ -680,6 +680,15 @@ async function searchMarkAndEnlistAsync(searchData, collectionRef, center, MAX_D
             const sal = data[__commonQueryString].salary;
             if (sal > searchData.salary_max || sal < searchData.salary_min) return;
 
+            if (__commonQueryString.substr(__commonQueryString.length - 2) === "Cl") {
+                // console.log('Contains Cl..filter class..');
+                const selectedClass = all_options_selected[3];
+                const classMentorTeach = data[__commonQueryString].query_list[3];
+                if (selectedClass !== classMentorTeach) return;
+            }
+            // console.log(data);
+
+
             let _dis = distance([data.l.latitude, data.l.longitude], [center.lat, center.lon]);
             let skipTeacher = false;
             if (_dis <= MAX_DISTANCE) {
