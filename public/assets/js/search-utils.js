@@ -22,7 +22,7 @@ async function deleteAllRejectedRecords(userUid) {
         querySnap.forEach(async (docSnap) => {
             const ds = await docSnap.ref.delete();
             // console.log();
-            
+
             // TODO 
             // const ds = await docSnap.data();
             // console.log(ds);
